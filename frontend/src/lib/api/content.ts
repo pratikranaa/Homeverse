@@ -2,10 +2,9 @@ import { apiClient } from './client';
 
 export interface ContentSection {
   id: string;
-  section_key: string;
-  section_type: 'hero' | 'benefits' | 'testimonials' | 'faq' | 'cta' | 'text' | 'contact';
-  content: Record<string, unknown>;
-  sort_order: number;
+  type: 'hero' | 'benefits' | 'testimonials' | 'faq' | 'cta' | 'text' | 'contact' | 'features' | 'banner' | 'team';
+  sort_order?: number;
+  [key: string]: unknown;
 }
 
 export interface ContentPage {
@@ -16,22 +15,32 @@ export interface ContentPage {
   sections: ContentSection[];
 }
 
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+}
+
 export async function getBuyerLandingContent(): Promise<ContentPage> {
-  return apiClient.get<ContentPage>('/api/v1/content/buyer-landing');
+  const response = await apiClient.get<ApiResponse<ContentPage>>('/api/v1/content/buyer-landing');
+  return response.data;
 }
 
 export async function getSellerLandingContent(): Promise<ContentPage> {
-  return apiClient.get<ContentPage>('/api/v1/content/seller-landing');
+  const response = await apiClient.get<ApiResponse<ContentPage>>('/api/v1/content/seller-landing');
+  return response.data;
 }
 
 export async function getAboutContent(): Promise<ContentPage> {
-  return apiClient.get<ContentPage>('/api/v1/content/about');
+  const response = await apiClient.get<ApiResponse<ContentPage>>('/api/v1/content/about');
+  return response.data;
 }
 
 export async function getContactContent(): Promise<ContentPage> {
-  return apiClient.get<ContentPage>('/api/v1/content/contact');
+  const response = await apiClient.get<ApiResponse<ContentPage>>('/api/v1/content/contact');
+  return response.data;
 }
 
 export async function getHomeContent(): Promise<ContentPage> {
-  return apiClient.get<ContentPage>('/api/v1/content/home');
+  const response = await apiClient.get<ApiResponse<ContentPage>>('/api/v1/content/home');
+  return response.data;
 }

@@ -20,14 +20,17 @@ interface FAQSectionProps {
 export function FAQSection({
   title,
   subtitle,
-  items,
+  items = [],
   className,
 }: FAQSectionProps) {
+  if (!items || items.length === 0) {
+    return null;
+  }
   const [openIndex, setOpenIndex] = React.useState<number | null>(null);
 
   return (
     <section className={cn('py-16 md:py-24', className)}>
-      <div className="container max-w-3xl px-4">
+      <div className="container mx-auto max-w-3xl px-4">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
           {subtitle && (
@@ -39,7 +42,7 @@ export function FAQSection({
           {items.map((item, index) => {
             const contentId = `faq-content-${index}`;
             const headerId = `faq-header-${index}`;
-            
+
             return (
               <div
                 key={index}

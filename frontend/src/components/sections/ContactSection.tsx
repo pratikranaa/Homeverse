@@ -15,6 +15,10 @@ interface ContactSectionProps {
 }
 
 export function ContactSection({ title, subtitle, contactInfo }: ContactSectionProps) {
+  if (!contactInfo) {
+    return null;
+  }
+
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
@@ -44,7 +48,7 @@ export function ContactSection({ title, subtitle, contactInfo }: ContactSectionP
                 <Mail className="h-6 w-6" />
               </div>
               <h3 className="mb-2 text-lg font-semibold">Email Us</h3>
-              <a 
+              <a
                 href={`mailto:${contactInfo.email}`}
                 className="text-muted-foreground hover:text-primary"
               >
@@ -59,7 +63,7 @@ export function ContactSection({ title, subtitle, contactInfo }: ContactSectionP
                 <Phone className="h-6 w-6" />
               </div>
               <h3 className="mb-2 text-lg font-semibold">Call Us</h3>
-              <a 
+              <a
                 href={`tel:${contactInfo.phone}`}
                 className="text-muted-foreground hover:text-primary"
               >

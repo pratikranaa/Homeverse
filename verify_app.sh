@@ -46,4 +46,21 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:1337/api/blog-posts
 echo ""
 
 echo "--------------------------------------------------"
+echo "Checking Form Submissions..."
+
+# Test Callback Form
+echo "Testing Callback Form Submission..."
+curl -s -X POST http://localhost:3001/api/v1/forms/callback \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test User", "phone": "+1234567890"}' | head -n 5
+echo ""
+
+# Test Broker Form
+echo "Testing Broker Form Submission..."
+curl -s -X POST http://localhost:3001/api/v1/forms/broker \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Test Broker", "phone": "+1987654321", "location": "New York", "property_type": "Apartment", "budget": "$500k"}' | head -n 5
+echo ""
+
+echo "--------------------------------------------------"
 echo "Verification Complete."

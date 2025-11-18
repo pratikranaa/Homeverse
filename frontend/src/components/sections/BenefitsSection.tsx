@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CheckCircle, Home, DollarSign, Shield, Clock, Users } from 'lucide-react';
+import { CheckCircle, Home, DollarSign, Shield, Clock, Users, Search, LifeBuoy, BarChart, Megaphone, Handshake } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { cn } from '@/lib/utils';
 
@@ -13,6 +13,12 @@ const iconMap = {
   shield: Shield,
   clock: Clock,
   users: Users,
+  // API icons
+  search: Search,
+  support: LifeBuoy,
+  chart: BarChart,
+  megaphone: Megaphone,
+  handshake: Handshake,
 };
 
 export interface Benefit {
@@ -31,12 +37,15 @@ interface BenefitsSectionProps {
 export function BenefitsSection({
   title,
   subtitle,
-  benefits,
+  benefits = [],
   className,
 }: BenefitsSectionProps) {
+  if (!benefits || benefits.length === 0) {
+    return null;
+  }
   return (
     <section className={cn('py-16 md:py-24', className)}>
-      <div className="container px-4">
+      <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
           {subtitle && (

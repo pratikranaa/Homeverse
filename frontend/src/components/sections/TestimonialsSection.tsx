@@ -10,6 +10,10 @@ export interface Testimonial {
   role: string;
   content: string;
   avatar?: string;
+  // API fields
+  text?: string;
+  image?: string;
+  rating?: number;
 }
 
 interface TestimonialsSectionProps {
@@ -22,12 +26,15 @@ interface TestimonialsSectionProps {
 export function TestimonialsSection({
   title,
   subtitle,
-  testimonials,
+  testimonials = [],
   className,
 }: TestimonialsSectionProps) {
+  if (!testimonials || testimonials.length === 0) {
+    return null;
+  }
   return (
     <section className={cn('bg-muted/50 py-16 md:py-24', className)}>
-      <div className="container px-4">
+      <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2>
           {subtitle && (
@@ -48,13 +55,13 @@ export function TestimonialsSection({
                 <CardContent className="pt-6">
                   <Quote className="mb-4 h-8 w-8 text-primary/20" />
                   <p className="text-lg text-muted-foreground">
-                    &quot;{testimonial.content}&quot;
+                    &quot;{testimonial.content || testimonial.text}&quot;
                   </p>
                 </CardContent>
                 <CardFooter className="flex items-center gap-4">
-                  {testimonial.avatar ? (
+                  {(testimonial.avatar || testimonial.image) ? (
                     <img
-                      src={testimonial.avatar}
+                      src={testimonial.avatar || testimonial.image}
                       alt={testimonial.name}
                       className="h-10 w-10 rounded-full object-cover"
                     />

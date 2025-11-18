@@ -20,9 +20,9 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     };
   }
 
-  const { title, excerpt, seo_title, seo_description, featured_image } = post.attributes;
-  const imageUrl = featured_image?.data?.attributes?.url
-    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${featured_image.data.attributes.url}`
+  const { title, excerpt, seo_title, seo_description, featured_image } = post;
+  const imageUrl = featured_image?.url
+    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${featured_image.url}`
     : undefined;
 
   return {
@@ -45,9 +45,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  const { title, content, publishedAt, featured_image, category, author } = post.attributes;
-  const imageUrl = featured_image?.data?.attributes?.url
-    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${featured_image.data.attributes.url}`
+  const { title, content, publishedAt, featured_image, category, author } = post;
+  const imageUrl = featured_image?.url
+    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${featured_image.url}`
     : null;
 
   // JSON-LD Structured Data
@@ -57,9 +57,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     headline: title,
     image: imageUrl ? [imageUrl] : [],
     datePublished: publishedAt,
-    author: author?.data ? {
+    author: author ? {
       '@type': 'Person',
-      name: author.data.attributes.name,
+      name: author.name,
     } : undefined,
   };
 
@@ -71,21 +71,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       />
 
       <header className="mb-8 text-center">
-        {category?.data && (
+        {category && (
           <div className="mb-4 flex justify-center">
-            <CategoryBadge name={category.data.attributes.name} />
+            <CategoryBadge name={category.name} />
           </div>
         )}
-        
+
         <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight md:text-5xl">
           {title}
         </h1>
 
-        {author?.data && (
+        {author && (
           <div className="flex justify-center">
-            <AuthorInfo 
-              author={author.data.attributes} 
-              date={publishedAt} 
+            <AuthorInfo
+              author={author}
+              date={publishedAt}
               showBio={false}
             />
           </div>
@@ -105,12 +105,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       )}
 
       <BlogContent content={content} />
-      
-      {author?.data && author.data.attributes.bio && (
+
+      {author && author.bio && (
         <div className="mt-12 border-t pt-8">
           <h3 className="mb-4 text-lg font-semibold">About the Author</h3>
-          <AuthorInfo 
-            author={author.data.attributes} 
+          <AuthorInfo
+            author={author}
             showBio={true}
           />
         </div>

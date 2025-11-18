@@ -3,15 +3,15 @@ import { cn } from '@/lib/utils';
 import { Author } from '@/lib/api/blog';
 
 interface AuthorInfoProps {
-  author: Author['attributes'];
+  author: Author;
   date?: string;
   className?: string;
   showBio?: boolean;
 }
 
 export function AuthorInfo({ author, date, className, showBio = false }: AuthorInfoProps) {
-  const avatarUrl = author.avatar?.data?.attributes?.url 
-    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${author.avatar.data.attributes.url}`
+  const avatarUrl = author.avatar?.url
+    ? `${process.env.NEXT_PUBLIC_STRAPI_URL}${author.avatar.url}`
     : null;
 
   return (
@@ -30,7 +30,7 @@ export function AuthorInfo({ author, date, className, showBio = false }: AuthorI
           {author.name.charAt(0)}
         </div>
       )}
-      
+
       <div className="flex flex-col">
         <span className="text-sm font-medium">{author.name}</span>
         {date && (
