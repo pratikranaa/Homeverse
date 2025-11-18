@@ -1,0 +1,251 @@
+# Implementation Plan
+
+- [x] 1. Set up Custom Backend project structure and core configuration
+  - Create Express.js project with TypeScript/JavaScript
+  - Set up folder structure: /src with /controllers, /services, /routes, /middleware, /models, /db, /helpers, /content subdirectories
+  - Configure environment variables and dotenv
+  - Set up package.json with required dependencies (express, pg, sequelize/prisma, joi/zod, axios, winston, pm2)
+  - Create health check endpoint at /health
+  - _Requirements: 16.1, 16.3, 18.1_
+
+- [x] 2. Set up Custom Backend database and migrations
+  - Configure PostgreSQL connection using Sequelize or Prisma
+  - Create database migration files for all 9 tables: content_pages, content_sections, cta_callback_requests, cta_broker_requests, integration_logs, response_logs, error_logs, submission_status, integration_config
+  - Implement UUID primary keys and proper foreign key relationships
+  - Add indexes for frequently queried fields (page_key, submission_id, status)
+  - Create seed data for content_pages and content_sections
+  - _Requirements: 4.1, 5.1, 6.1, 7.1, 8.1_
+
+- [x] 3. Implement content management system
+  - [x] 3.1 Create ContentRepository for database access
+    - Implement methods: getPageByKey, getSectionsByPageId, getAllSections
+    - Add query optimization with proper joins
+    - _Requirements: 4.1, 5.1, 6.1, 7.1, 8.1_
+  - [x] 3.2 Create ContentManager service with caching
+    - Implement in-memory cache or Redis integration
+    - Add cache invalidation logic
+    - Implement content retrieval with cache-first strategy
+    - _Requirements: 4.4, 5.4_
+  - [x] 3.3 Create ContentController with route handlers
+    - Implement GET /api/v1/content/buyer-landing
+    - Implement GET /api/v1/content/seller-landing
+    - Implement GET /api/v1/content/about
+    - Implement GET /api/v1/content/contact
+    - Implement GET /api/v1/content/home
+    - Return standardized JSON responses
+    - _Requirements: 4.2, 4.3, 5.2, 5.3, 6.2, 6.3, 7.2, 7.3, 8.2, 8.3_
+  - [x] 3.4 Create content routes and wire to Express app
+    - Define routes in /src/routes/content.routes.js
+    - Mount routes with /api/v1 prefix
+    - _Requirements: 18.1_
+
+- [x] 4. Implement form validation and processing
+  - [x] 4.1 Create validation schemas using Joi or Zod
+    - Define callback form schema (name, phone, city)
+    - Define broker form schema (name, phone, budget, property_type, location)
+    - Add phone number validation (E.164 format)
+    - Add email validation
+    - _Requirements: 1.1, 2.1_
+  - [x] 4.2 Create FormRepository for database access
+    - Implement createCallbackRequest method
+    - Implement createBrokerRequest method
+    - Implement updateSubmissionStatus method
+    - Implement getSubmissionById method
+    - _Requirements: 1.5, 2.5, 3.1_
+  - [x] 4.3 Create FormProcessor service
+    - Implement validateCallbackForm method
+    - Implement validateBrokerForm method
+    - Implement processCallbackSubmission method
+    - Implement processBrokerSubmission method
+    - _Requirements: 1.1, 2.1_
+
+- [x] 5. Implement Exponentia API integration
+  - [x] 5.1 Create ExponentiaAdapter service
+    - Implement sendCallbackRequest method with Axios
+    - Implement sendBrokerRequest method with Axios
+    - Add request/response transformation logic
+    - Configure API endpoint and authentication from environment variables
+    - _Requirements: 1.2, 2.2_
+  - [x] 5.2 Create RetryQueue service with exponential backoff
+    - Implement retry logic with 3 maximum attempts
+    - Implement exponential backoff delays (1s, 2s, 4s)
+    - Add retry attempt logging
+    - Handle final failure scenario
+    - _Requirements: 1.3, 2.3_
+  - [x] 5.3 Create LoggingService for API interactions
+    - Implement logRequest method (saves to integration_logs table)
+    - Implement logResponse method (saves to response_logs table)
+    - Implement logError method (saves to error_logs table)
+    - Include timestamps and correlation IDs
+    - _Requirements: 1.4, 2.4, 9.1, 9.2, 9.3, 9.4_
+
+- [x] 6. Implement form submission endpoints
+  - [x] 6.1 Create CallbackFormController
+    - Implement POST /api/v1/forms/callback handler
+    - Validate request body using validation schema
+    - Call FormProcessor to process submission
+    - Call ExponentiaAdapter to send data
+    - Handle retry logic on failure
+    - Log all interactions
+    - Return success response with submission_id
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [x] 6.2 Create BrokerFormController
+    - Implement POST /api/v1/forms/broker handler
+    - Validate request body using validation schema
+    - Call FormProcessor to process submission
+    - Call ExponentiaAdapter to send data
+    - Handle retry logic on failure
+    - Log all interactions
+    - Trigger WhatsApp redirect on success
+    - Return success response with submission_id and redirect_url
+    - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
+  - [x] 6.3 Create StatusController
+    - Implement GET /api/v1/forms/broker/status/:id handler
+    - Retrieve submission status from database
+    - Return 404 if submission not found
+    - Return status, submitted_at, and processed_at timestamps
+    - _Requirements: 3.1, 3.2, 3.3, 3.4_
+  - [x] 6.4 Create form routes and wire to Express app
+    - Define routes in /src/routes/forms.routes.js
+    - Mount routes with /api/v1 prefix
+    - _Requirements: 18.1_
+
+- [x] 7. Implement WhatsApp redirect logic
+  - Create WhatsAppRedirect service
+  - Implement generateRedirectUrl method
+  - Add phone number formatting for WhatsApp
+  - Include pre-filled message parameters
+  - Integrate with BrokerFormController
+  - _Requirements: 2.5_
+
+- [x] 8. Implement middleware and error handling
+  - [x] 8.1 Create error handling middleware
+    - Implement global error handler
+    - Format errors according to standardized response structure
+    - Map error types to HTTP status codes (400, 404, 502, 500)
+    - Log errors using LoggingService
+    - _Requirements: 1.1, 2.1, 3.2_
+  - [x] 8.2 Create request logging middleware
+    - Log incoming requests with method, path, and timestamp
+    - Log response status and duration
+    - _Requirements: 9.1_
+  - [x] 8.3 Create validation middleware
+    - Implement schema validation wrapper
+    - Return 400 errors for validation failures
+    - _Requirements: 1.1, 2.1_
+  - [x] 8.4 Create rate limiting middleware
+    - Implement rate limiter (100 req/min per IP)
+    - Return 429 errors when limit exceeded
+    - _Requirements: 17.1, 17.2_
+  - [x] 8.5 Create CORS middleware
+    - Configure allowed origins from environment variables
+    - Allow GET and POST methods
+    - _Requirements: 17.1, 17.2_
+
+- [x] 9. Implement helper utilities
+  - Create responseFormatter helper for standardized success responses
+  - Create errorFormatter helper for standardized error responses
+  - Create cacheManager helper for content caching logic
+  - Create retryHelper with exponential backoff calculation
+  - _Requirements: 4.4, 5.4_
+
+- [x] 10. Set up Strapi project and configuration
+  - Initialize new Strapi project
+  - Configure PostgreSQL database connection
+  - Set up environment variables (DATABASE_URL, AWS credentials)
+  - Configure AWS S3 upload provider in /config/plugins.js
+  - Set up admin panel access
+  - _Requirements: 15.4_
+
+- [x] 11. Create Strapi blog content types
+  - [x] 11.1 Create blog-post content type
+    - Add fields: title (string), slug (uid), content (richtext), excerpt (text)
+    - Add featured_image (media, single)
+    - Add seo_title (string), seo_description (text)
+    - Add published_at (datetime)
+    - Add relation to blog-category (many-to-one)
+    - Add relation to blog-author (many-to-one)
+    - _Requirements: 10.2, 11.2, 14.3_
+  - [x] 11.2 Create blog-category content type
+    - Add fields: name (string), slug (uid), description (text)
+    - _Requirements: 12.2_
+  - [x] 11.3 Create blog-author content type
+    - Add fields: name (string), bio (text), avatar (media, single), social_links (json)
+    - _Requirements: 13.2_
+  - [x] 11.4 Configure content type permissions
+    - Set public role to have find and findOne permissions on all blog content types
+    - Set authenticated role to have full CRUD permissions
+    - _Requirements: 17.3, 17.4_
+
+- [x] 12. Configure Strapi API endpoints
+  - [x] 12.1 Configure blog-post API
+    - Enable find endpoint at GET /api/blogs
+    - Enable findOne endpoint at GET /api/blogs/:slug
+    - Configure population for category and author relations
+    - Configure pagination parameters
+    - _Requirements: 10.1, 10.3, 10.4, 11.1, 11.3_
+  - [x] 12.2 Configure blog-category API
+    - Enable find endpoint at GET /api/blog-categories
+    - Configure filtering by category
+    - _Requirements: 12.1, 12.3, 12.4_
+  - [x] 12.3 Configure blog-author API
+    - Enable find endpoint at GET /api/blog-authors
+    - _Requirements: 13.1, 13.3_
+  - [x] 12.4 Add API versioning prefix
+    - Configure all routes to use /api prefix
+    - _Requirements: 18.2_
+
+- [x] 13. Configure Strapi media upload
+  - Install @strapi/provider-upload-aws-s3 package
+  - Configure S3 provider in /config/plugins.js with bucket, region, credentials
+  - Set up public-read ACL for uploaded files
+  - Test image upload functionality
+  - Verify S3 URLs are returned in API responses
+  - _Requirements: 14.1, 14.2, 14.4_
+
+
+- [ ] 17. Create deployment scripts and CI/CD pipeline
+  - [x] 17.1 Create Custom Backend deployment script
+    - Write script to build application
+    - Write script to run database migrations
+    - Write script to create AMI with application code
+    - Write script to update launch template and trigger Auto Scaling refresh
+    - _Requirements: 15.1_
+  - [x] 17.2 Create Strapi Backend deployment script
+    - Write script to build Strapi application
+    - Write script to run Strapi migrations
+    - Write script to create AMI with application code
+    - Write script to update launch template and trigger Auto Scaling refresh
+    - _Requirements: 15.3_
+  - [ ]* 17.3 Set up CI/CD pipeline
+    - Configure GitHub Actions or AWS CodePipeline
+    - Add stages: checkout, install, lint, test, build, deploy to staging, E2E tests, deploy to production
+    - Add manual approval gate before production deployment
+    - _Requirements: 15.1, 15.3_
+
+- [ ]* 18. Write integration tests for Custom Backend
+  - Write tests for content endpoints (GET /content/*)
+  - Write tests for form submission endpoints (POST /forms/*)
+  - Write tests for status endpoint (GET /forms/broker/status/:id)
+  - Mock Exponentia API calls using Nock
+  - Test retry logic and error handling
+  - Test validation errors
+  - _Requirements: 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 3.1, 3.2, 4.1, 5.1, 6.1, 7.1, 8.1_
+
+- [ ]* 19. Write integration tests for Strapi Backend
+  - Write tests for blog listing endpoint (GET /api/blogs)
+  - Write tests for blog detail endpoint (GET /api/blogs/:slug)
+  - Write tests for blog categories endpoint (GET /api/blog-categories)
+  - Write tests for blog authors endpoint (GET /api/blog-authors)
+  - Test public read permissions
+  - Test pagination and filtering
+  - _Requirements: 10.1, 10.3, 10.4, 11.1, 11.3, 12.1, 12.3, 12.4, 13.1, 13.3_
+
+- [ ]* 20. Create API documentation
+  - Document all Custom Backend endpoints with request/response examples
+  - Document all Strapi Backend endpoints with request/response examples
+  - Include authentication requirements (none for public endpoints)
+  - Include rate limiting information
+  - Include error response formats
+  - Create Postman collection or OpenAPI specification
+  - _Requirements: 16.3, 16.4, 17.1, 17.2_

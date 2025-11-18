@@ -1,0 +1,287 @@
+# Implementation Plan
+
+- [X]
+
+  - Create Next.js 14+ project with TypeScript and App Router
+  - Understand both the backend structure
+  - Install dependencies: tailwindcss, zod, lucide-react, framer-motion
+  - Configure Tailwind CSS with custom theme (colors, typography, spacing)
+  - Set up project folder structure: /app, /components, /lib, /styles
+  - Create environment variables file with backend URLs
+  - Configure next.config.js for image domains and optimization
+  - _Requirements: 15.1, 15.4, 15.5_
+- [ ]
+
+  - [X] 2.1 Create base API client
+    - Write APIClient class in /lib/api/client.ts with get and post methods
+    - Implement error handling for failed requests
+    - Configure fetch with caching strategies (revalidate for GET, no-store for POST)
+    - Export singleton apiClient instance
+    - _Requirements: 10.2, 10.5_
+  - [X] 2.2 Create content service
+    - Write content API functions in /lib/api/content.ts
+    - Implement getBuyerLandingContent, getSellerLandingContent, getAboutContent, getContactContent
+    - Define TypeScript interfaces for ContentPage and ContentSection
+    - _Requirements: 1.2, 2.2, 7.2, 8.2_
+  - [X] 2.3 Create blog service
+    - Write blog API functions in /lib/api/blog.ts
+    - Implement getBlogPosts with pagination, getBlogPostBySlug, getBlogCategories, getBlogAuthors
+    - Define TypeScript interfaces for BlogPost, Category, Author, StrapiImage
+    - _Requirements: 5.2, 6.2_
+  - [X] 2.4 Create form service
+    - Write form submission functions in /lib/api/forms.ts
+    - Implement submitCallbackForm and submitBrokerForm
+    - Define TypeScript interfaces for form data and responses
+    - _Requirements: 3.2, 4.2_
+- [ ]
+
+  - [X] 3.1 Create Button component
+    - Implement Button component in /components/ui/Button.tsx
+    - Add variants: primary, secondary, outline, ghost
+    - Add sizes: sm, md, lg
+    - Implement loading state with spinner
+    - Add Tailwind classes for hover and focus effects
+    - _Requirements: 17.1_
+  - [X] 3.2 Create Input component
+    - Implement Input component in /components/ui/Input.tsx
+    - Add label, error message, and helper text props
+    - Style with Tailwind for focus ring and error states
+    - _Requirements: 3.1, 4.1_
+  - [X] 3.3 Create Card component
+    - Implement Card component in /components/ui/Card.tsx
+    - Add rounded corners, shadow, and optional hover effect
+    - _Requirements: 5.5_
+  - [X] 3.4 Create Skeleton loader component
+    - Implement Skeleton component in /components/ui/Skeleton.tsx
+    - Create animated loading placeholder with Tailwind
+    - _Requirements: 11.1_
+  - [X] 3.5 Create ErrorMessage component
+    - Implement ErrorMessage component in /components/ui/ErrorMessage.tsx
+    - Display error text with icon and styling
+    - _Requirements: 11.3, 16.1_
+- [ ]
+
+  - [X] 4.1 Create Header component
+    - Implement Header component in /components/layout/Header.tsx
+    - Add logo, navigation links, and mobile menu toggle
+    - Implement sticky positioning on scroll
+    - Style with Tailwind for responsive design
+    - _Requirements: 13.1, 13.4_
+  - [X] 4.2 Create Navigation component
+    - Implement Navigation component in /components/layout/Navigation.tsx
+    - Display navigation items with active route highlighting
+    - Add hover effects and smooth transitions
+    - _Requirements: 13.3_
+  - [X] 4.3 Create MobileMenu component
+    - Implement MobileMenu as client component in /components/layout/MobileMenu.tsx
+    - Add slide-in animation from right with overlay backdrop
+    - Close menu on route change
+    - _Requirements: 13.4, 14.1_
+  - [X] 4.4 Create Footer component
+    - Implement Footer component in /components/layout/Footer.tsx
+    - Add company info, quick links, social media links, copyright
+    - Style with Tailwind for responsive layout
+    - _Requirements: 13.2_
+  - [X] 4.5 Create root layout
+    - Implement root layout in /app/layout.tsx
+    - Add Header and Footer components
+    - Configure global metadata and SEO defaults
+    - Import global CSS with Tailwind directives
+    - _Requirements: 9.1, 9.2, 13.1, 13.2_
+- [ ]
+
+  - [X] 5.1 Create HeroSection component
+    - Implement HeroSection in /components/sections/HeroSection.tsx
+    - Add title, subtitle, CTA button, and background image support
+    - Implement responsive text sizing and layout
+    - Add fade-in animation on mount
+    - _Requirements: 1.3, 2.3, 17.3_
+  - [X] 5.2 Create BenefitsSection component
+    - Implement BenefitsSection in /components/sections/BenefitsSection.tsx
+    - Display benefits in grid layout (3 columns desktop, 1 column mobile)
+    - Add icon, title, and description for each benefit
+    - Implement hover effects and fade-in on scroll
+    - _Requirements: 1.3, 2.3, 17.3_
+  - [X] 5.3 Create TestimonialsSection component
+    - Implement TestimonialsSection in /components/sections/TestimonialsSection.tsx
+    - Display testimonials with quote styling, avatar, name, and role
+    - Implement grid or carousel layout
+    - _Requirements: 1.3, 2.3_
+  - [X] 5.4 Create FAQSection component
+    - Implement FAQSection as client component in /components/sections/FAQSection.tsx
+    - Create accordion with expand/collapse functionality
+    - Implement smooth animations and keyboard accessibility
+    - Allow only one FAQ open at a time
+    - _Requirements: 1.3, 2.3, 12.4_
+- [X]
+
+  - [X] 6.1 Create CallbackForm component
+    - Implement CallbackForm as client component in /components/forms/CallbackForm.tsx
+    - Add form fields: name, phone, city
+    - Implement Zod validation schema for form data
+    - Add loading state during submission with disabled button
+    - Call submitCallbackForm on submit and handle success/error
+    - Display success message on HTTP 200
+    - Display error message on failure
+    - Reset form on successful submission
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - [X] 6.2 Create BrokerForm component
+    - Implement BrokerForm as client component in /components/forms/BrokerForm.tsx
+    - Add form fields: name, phone, city, propertyType, budget
+    - Implement Zod validation schema for form data
+    - Add loading state during submission with disabled button
+    - Call submitBrokerForm on submit and handle success/error
+    - Redirect to WhatsApp URL on HTTP 200 with redirect_url
+    - Display error message on failure
+    - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
+- [ ]
+
+  - [X] 7.1 Create BlogCard component
+    - Implement BlogCard in /components/blog/BlogCard.tsx
+    - Display featured image, title, excerpt, category badge, author info, publication date
+    - Add hover effects with shadow and scale
+    - Link to blog detail page using slug
+    - _Requirements: 5.3, 5.5_
+  - [X] 7.2 Create BlogContent component
+    - Implement BlogContent in /components/blog/BlogContent.tsx
+    - Render Strapi rich text content with proper HTML formatting
+    - Style headings, paragraphs, lists, images with Tailwind typography
+    - _Requirements: 6.3_
+  - [X] 7.3 Create Pagination component
+    - Implement Pagination as client component in /components/blog/Pagination.tsx
+    - Add Previous/Next buttons and page numbers
+    - Highlight current page and disable buttons at boundaries
+    - Update URL search params on page change
+    - _Requirements: 5.4_
+  - [X] 7.4 Create AuthorInfo component
+    - Implement AuthorInfo in /components/blog/AuthorInfo.tsx
+    - Display author avatar, name, bio, and publication date
+    - _Requirements: 6.4_
+  - [X] 7.5 Create CategoryBadge component
+    - Implement CategoryBadge in /components/blog/CategoryBadge.tsx
+    - Display category name with styled badge
+    - _Requirements: 6.5_
+- [x]
+
+  - Create page component in /app/page.tsx as Server Component
+  - Fetch buyer landing content using getBuyerLandingContent
+  - Render sections dynamically based on section type (hero, benefits, testimonials, faq)
+  - Add CallbackForm and BrokerForm in CTA section
+  - Generate SEO metadata with title, description, and Open Graph tags
+  - Implement loading.tsx with skeleton loaders
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 9.1, 9.2, 11.1_
+- [x]
+
+  - Create page component in /app/seller/page.tsx as Server Component
+  - Fetch seller landing content using getSellerLandingContent
+  - Render sections dynamically (hero, benefits, testimonials, faq)
+  - Do not include CTA forms
+  - Generate SEO metadata
+  - Implement loading.tsx with skeleton loaders
+  - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 9.1, 9.2, 11.1_
+- [x]
+
+  - Create page component in /app/blogs/page.tsx as Server Component
+  - Read page number from searchParams
+  - Fetch blog posts using getBlogPosts with pagination
+  - Render BlogCard components in responsive grid
+  - Add Pagination component with current page and total pages
+  - Generate SEO metadata
+  - Implement loading.tsx with skeleton loaders
+  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 9.1, 9.2, 11.1_
+- [x]
+
+  - Create page component in /app/blogs/[slug]/page.tsx as Server Component
+  - Fetch blog post using getBlogPostBySlug with slug param
+  - Render CategoryBadge, title, AuthorInfo, featured image, and BlogContent
+  - Generate dynamic SEO metadata from blog post data (seo_title, seo_description, featured_image)
+  - Implement structured data (JSON-LD) for Article schema
+  - Handle not found case with notFound() function
+  - Implement loading.tsx with skeleton loaders
+  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 9.1, 9.2, 9.3, 9.5, 11.1, 16.3_
+- [x]
+
+  - Create page component in /app/about/page.tsx as Server Component
+  - Fetch about content using getAboutContent
+  - Render content sections dynamically
+  - Generate SEO metadata
+  - Implement loading.tsx with skeleton loaders
+  - _Requirements: 7.1, 7.2, 7.3, 7.4, 9.1, 9.2, 11.1_
+- [x]
+
+  - Create page component in /app/contact/page.tsx as Server Component
+  - Fetch contact content using getContactContent
+  - Render content sections with contact information
+  - Generate SEO metadata
+  - Implement loading.tsx with skeleton loaders
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 9.1, 9.2, 11.1_
+- [x]
+
+  - [X] 14.1 Create global error page
+    - Implement error.tsx in /app as Client Component
+    - Display error message and retry button
+    - Style with Tailwind for centered layout
+    - _Requirements: 11.3, 16.1, 16.2, 16.5_
+  - [X] 14.2 Create 404 not found page
+    - Implement not-found.tsx in /app
+    - Display 404 message with link to homepage
+    - Style with Tailwind for centered layout
+    - _Requirements: 16.3_
+  - [X] 14.3 Create loading states
+    - Implement loading.tsx files for each route with Skeleton components
+    - _Requirements: 11.1, 11.4_
+- [x]
+
+  - Add semantic HTML elements throughout all components (header, nav, main, article, section, footer)
+  - Ensure proper heading hierarchy on all pages (single h1, nested h2/h3)
+  - Add alt text to all Image components
+  - Implement keyboard navigation for interactive elements (forms, menus, accordions)
+  - Test and fix color contrast ratios to meet WCAG AA standards
+  - Add aria-labels where needed for screen readers
+  - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5_
+- [x]
+
+  - Apply mobile-first Tailwind breakpoints to all components (sm, md, lg, xl)
+  - Ensure touch targets are minimum 44x44 pixels on mobile
+  - Optimize images for mobile with responsive sizes
+  - Test forms on mobile devices for usability
+  - Verify mobile menu functionality
+  - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5_
+- [x]
+
+  - Use Next.js Image component for all images with width, height, and loading props
+  - Implement route prefetching with Link component
+  - Configure image optimization in next.config.js
+  - Set appropriate cache revalidation times for API calls
+  - Implement code splitting with dynamic imports for heavy components
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5_
+- [x]
+
+  - Add Tailwind transition classes to buttons, cards, and interactive elements
+  - Implement smooth scroll behavior in global CSS
+  - Add fade-in animations for sections using Framer Motion or CSS
+  - Implement hover effects (shadow, scale, color changes)
+  - Respect prefers-reduced-motion media query
+  - _Requirements: 17.1, 17.2, 17.3, 17.4, 17.5_
+- [ ]* 19. Write component tests
+
+  - Write unit tests for UI components (Button, Input, Card) using Jest and React Testing Library
+  - Write tests for form components with validation scenarios
+  - Write tests for section components with different props
+  - Test error states and loading states
+  - Test accessibility with axe-core
+  - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 4.1, 4.2, 4.3, 4.4, 6.1, 6.2_
+- [ ]* 20. Write integration tests
+
+  - Test API client with mocked fetch responses
+  - Test form submission flows end-to-end
+  - Test navigation and routing
+  - Test error handling scenarios
+  - _Requirements: 3.2, 4.2, 16.1_
+- [ ]* 21. Create documentation
+
+  - Document component API and props in README
+  - Document environment variables setup
+  - Document build and deployment process
+  - Create component storybook or examples
+  - _Requirements: 15.1, 15.4_

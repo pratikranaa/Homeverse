@@ -1,0 +1,1 @@
+{"data":{"budget":"500000","email":"john@example.com","location":"Downtown","name":"John Doe","phone":"+9876543210","property_type":"apartment"},"error":"Cannot read properties of undefined (reading 'replace')","level":"error","message":"Error generating WhatsApp redirect URL","service":"custom-backend","timestamp":"2025-11-16 12:13:54"}
